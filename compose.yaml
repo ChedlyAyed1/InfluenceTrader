@@ -1,0 +1,15 @@
+services:
+  api:
+    init: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: influence-trader:latest
+    container_name: influence-trader-api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
