@@ -11,12 +11,14 @@ from influence_trader.llm.client import GroqMarketAnalysisClient
 from influence_trader.pipeline.service import PipelineService
 from influence_trader.scraper.filtering import TweetRelevanceFilter
 from influence_trader.scraper.service import TwscrapeInfluencerScraper
+from influence_trader.scraper.twscrape_compat import apply_twscrape_workarounds
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
     configure_logging(settings.log_level)
+    apply_twscrape_workarounds(settings)
 
     scraper = TwscrapeInfluencerScraper(settings)
     relevance_filter = TweetRelevanceFilter(settings.relevance_keywords)

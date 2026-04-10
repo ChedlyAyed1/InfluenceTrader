@@ -21,6 +21,10 @@ class Settings(BaseSettings):
 
     x_accounts_db_path: Path = Path("data/twscrape/accounts.db")
     x_poll_limit_per_handle: int = 5
+    x_twscrape_enable_xclid_workaround: bool = True
+    x_twscrape_ondemand_script_url: str = (
+        "https://abs.twimg.com/responsive-web/client-web/ondemand.s.2507f89a.js"
+    )
     x_default_handles: Annotated[list[str], NoDecode] = Field(
         default_factory=lambda: [
             "realDonaldTrump",
