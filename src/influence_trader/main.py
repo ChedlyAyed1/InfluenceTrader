@@ -9,7 +9,7 @@ from influence_trader.core.config import get_settings
 from influence_trader.core.logging import configure_logging
 from influence_trader.llm.client import GroqMarketAnalysisClient
 from influence_trader.pipeline.service import PipelineService
-from influence_trader.scraper.filtering import TweetRelevanceFilter
+from influence_trader.scraper.filtering import TweetStructuralPreFilter
 from influence_trader.scraper.service import TwscrapeInfluencerScraper
 from influence_trader.scraper.twscrape_compat import apply_twscrape_workarounds
 
@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     apply_twscrape_workarounds(settings)
 
     scraper = TwscrapeInfluencerScraper(settings)
-    relevance_filter = TweetRelevanceFilter(settings.relevance_keywords)
+    relevance_filter = TweetStructuralPreFilter()
     llm_client = GroqMarketAnalysisClient(settings) if settings.groq_api_key else None
     pipeline = PipelineService(
         scraper=scraper,

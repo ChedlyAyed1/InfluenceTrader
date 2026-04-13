@@ -5,7 +5,9 @@ from influence_trader.domain.models import (
     PipelineRunRequest,
     PipelineRunResult,
     RelevantTweetCandidate,
+    RelevanceLabel,
     ScrapedTweet,
+    SemanticRelevanceAssessment,
     TweetAuthor,
 )
 
@@ -16,6 +18,8 @@ __all__ = [
     "PipelineRunRequest",
     "PipelineRunResult",
     "RelevantTweetCandidate",
+    "RelevanceLabel",
     "ScrapedTweet",
+    "SemanticRelevanceAssessment",
     "TweetAuthor",
 ]

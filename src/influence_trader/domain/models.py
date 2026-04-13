@@ -33,6 +33,11 @@ class AssetClass(StrEnum):
     indices = "indices"
 
 
+class RelevanceLabel(StrEnum):
+    market_relevant = "market_relevant"
+    not_relevant = "not_relevant"
+
+
 class TweetAuthor(StrictModel):
     handle: str
     display_name: str
@@ -60,13 +65,21 @@ class RelevantTweetCandidate(StrictModel):
     filter_reason: str
 
 
+class SemanticRelevanceAssessment(StrictModel):
+    label: RelevanceLabel
+    confidence: float = Field(ge=0.0, le=1.0)
+    reason: str
+
+
 class ImpactedAsset(StrictModel):
     asset_name: str = Field(
         description="Specific asset, ticker, index, currency or commodity name."
     )
     asset_class: AssetClass
     sector_or_theme: str
-    expected_effect: str = Field(description="Short explanation of the likely directional impact.")
+    expected_effect: str = Field(
+        description="Short explanation of the likely directional impact."
+    )
     confidence: float = Field(ge=0.0, le=1.0)
 
 

@@ -5,10 +5,11 @@ from influence_trader.domain.models import (
     PipelineRunRequest,
     PipelineRunResult,
     RelevantTweetCandidate,
+    RelevanceLabel,
     ScrapedTweet,
 )
 from influence_trader.llm.client import GroqMarketAnalysisClient
-from influence_trader.scraper.filtering import TweetRelevanceFilter
+from influence_trader.scraper.filtering import TweetStructuralPreFilter
 from influence_trader.scraper.service import TwscrapeInfluencerScraper
 
 
@@ -16,7 +17,7 @@ class PipelineService:
     def __init__(
         self,
         scraper: TwscrapeInfluencerScraper,
-        relevance_filter: TweetRelevanceFilter,
+        relevance_filter: TweetStructuralPreFilter,
         llm_client: GroqMarketAnalysisClient | None,
     ) -> None:
         self._scraper = scraper
@@ -35,12 +36,28 @@ class PipelineService:
 
         candidates: list[RelevantTweetCandidate] = []
         for tweet in tweets:
-            is_relevant, reason = self._relevance_filter.evaluate(tweet)
-            if is_relevant:
+            passed_prefilter, prefilter_reason = self._relevance_filter.evaluate(
+                tweet,
+                target_handles=handles,
+            )
+            if not passed_prefilter:
+                continue
+
+            candidate = RelevantTweetCandidate(
+                tweet=tweet,
+                filter_reason=prefilter_reason,
+            )
+
+            if self._llm_client is None:
+                candidates.append(candidate)
+                continue
+
+            semantic_assessment = await self._llm_client.classify_relevance(candidate)
+            if semantic_assessment.label is RelevanceLabel.market_relevant:
                 candidates.append(
                     RelevantTweetCandidate(
                         tweet=tweet,
-                        filter_reason=reason,
+                        filter_reason=semantic_assessment.reason,
                     )
                 )
 

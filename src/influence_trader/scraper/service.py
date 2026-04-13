@@ -32,7 +32,8 @@ class TwscrapeInfluencerScraper:
         seen_ids: set[int] = set()
 
         for handle in resolved_handles:
-            user = await self._api.user_by_login(handle)
+            normalized_handle = handle.lower().lstrip("@")
+            user = await self._api.user_by_login(normalized_handle)
             if user is None:
                 logger.warning("Unable to resolve X handle: %s", handle)
                 continue
@@ -40,6 +41,8 @@ class TwscrapeInfluencerScraper:
             async for tweet in self._api.user_tweets(user.id, limit=resolved_limit):
                 normalized = self._normalize_tweet(tweet)
                 if normalized is None:
+                    continue
+                if normalized.author.handle.lower() != normalized_handle:
                     continue
                 if normalized.is_repost or normalized.is_reply:
                     continue
