@@ -38,7 +38,9 @@ class TwscrapeInfluencerScraper:
                 logger.warning("Unable to resolve X handle: %s", handle)
                 continue
 
-            async for tweet in self._api.user_tweets(user.id, limit=resolved_limit):
+            fetch_window = min(max(resolved_limit * 5, 20), 40)
+            handle_tweets: list[ScrapedTweet] = []
+            async for tweet in self._api.user_tweets(user.id, limit=fetch_window):
                 normalized = self._normalize_tweet(tweet)
                 if normalized is None:
                     continue
@@ -50,7 +52,10 @@ class TwscrapeInfluencerScraper:
                     continue
 
                 seen_ids.add(normalized.tweet_id)
-                tweets.append(normalized)
+                handle_tweets.append(normalized)
+
+            handle_tweets.sort(key=lambda item: item.created_at, reverse=True)
+            tweets.extend(handle_tweets[:resolved_limit])
 
         tweets.sort(key=lambda item: item.created_at, reverse=True)
         return tweets

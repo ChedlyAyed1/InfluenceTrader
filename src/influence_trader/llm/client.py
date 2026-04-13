@@ -17,6 +17,10 @@ from influence_trader.llm.prompt_loader import (
 )
 
 
+class LLMRateLimitError(RuntimeError):
+    pass
+
+
 class GroqMarketAnalysisClient:
     def __init__(self, settings: Settings) -> None:
         if not settings.groq_api_key:
@@ -119,7 +123,13 @@ class GroqMarketAnalysisClient:
                 schema_name=schema_name,
             ),
         )
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code == 429:
+                msg = "Groq rate limit reached. Reduce request volume and retry in a moment."
+                raise LLMRateLimitError(msg) from exc
+            raise
 
         payload = response.json()
         content = payload["choices"][0]["message"]["content"]
