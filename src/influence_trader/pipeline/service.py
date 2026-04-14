@@ -14,6 +14,8 @@ from influence_trader.scraper.service import TwscrapeInfluencerScraper
 
 
 class PipelineService:
+    """Coordinate scraping, relevance selection, and final market analysis."""
+
     def __init__(
         self,
         scraper: TwscrapeInfluencerScraper,
@@ -29,6 +31,8 @@ class PipelineService:
         handles: list[str] | None,
         limit_per_handle: int,
     ) -> tuple[list[ScrapedTweet], list[RelevantTweetCandidate]]:
+        """Return raw scraped tweets plus the subset retained as relevant candidates."""
+
         tweets = await self._scraper.fetch_recent_tweets(
             handles=handles,
             limit_per_handle=limit_per_handle,
@@ -64,6 +68,8 @@ class PipelineService:
         return tweets, candidates
 
     async def run_once(self, request: PipelineRunRequest) -> PipelineRunResult:
+        """Run the full pipeline once and analyze up to ``max_analyses`` candidates."""
+
         tweets, candidates = await self.fetch_relevant_tweets(
             handles=request.handles,
             limit_per_handle=request.limit_per_handle,

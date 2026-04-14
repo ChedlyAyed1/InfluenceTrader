@@ -7,6 +7,8 @@ from influence_trader.domain.models import ScrapedTweet
 
 
 class TweetStructuralPreFilter:
+    """Apply cheap structural checks before any semantic LLM classification."""
+
     def __init__(
         self,
         min_length: int = 25,
@@ -20,6 +22,8 @@ class TweetStructuralPreFilter:
         tweet: ScrapedTweet,
         target_handles: Sequence[str] | None = None,
     ) -> tuple[bool, str]:
+        """Return whether a tweet survives prefiltering plus the decision reason."""
+
         text = self._normalize(tweet.text)
         normalized_target_handles = {handle.lower().lstrip("@") for handle in target_handles or []}
 
@@ -47,16 +51,22 @@ class TweetStructuralPreFilter:
         return True, "Passed structural prefilter and requires semantic relevance classification."
 
     def _is_allowed_language(self, tweet: ScrapedTweet) -> bool:
+        """Keep language filtering in one place so supported languages stay explicit."""
+
         if tweet.language is None:
             return True
         return tweet.language.lower() in self._allowed_languages
 
     @staticmethod
     def _normalize(text: str) -> str:
+        """Normalize whitespace and case before applying simple structural checks."""
+
         return re.sub(r"\s+", " ", text.strip().lower())
 
     @staticmethod
     def _looks_like_sparse_statement(text: str) -> bool:
+        """Reject tweets that are too short or context-poor for reliable classification."""
+
         if text.count(" ") < 4:
             return True
         if len(re.sub(r"[\W_]+", "", text)) < 20:

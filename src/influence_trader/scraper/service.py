@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 class TwscrapeInfluencerScraper:
+    """Fetch and normalize tweets from configured X accounts via twscrape."""
+
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
         self._api = API(str(settings.x_accounts_db_path))
@@ -23,6 +25,8 @@ class TwscrapeInfluencerScraper:
         handles: Sequence[str] | None = None,
         limit_per_handle: int | None = None,
     ) -> list[ScrapedTweet]:
+        """Collect the newest accepted tweets for each requested handle."""
+
         await self._seed_account_if_needed()
 
         resolved_handles = list(handles or self._settings.x_default_handles)
@@ -61,6 +65,8 @@ class TwscrapeInfluencerScraper:
         return tweets
 
     async def _seed_account_if_needed(self) -> None:
+        """Bootstrap the local twscrape account pool once per app process."""
+
         if self._account_seed_attempted:
             return
 
@@ -83,6 +89,8 @@ class TwscrapeInfluencerScraper:
 
     @staticmethod
     def _normalize_tweet(tweet: object) -> ScrapedTweet | None:
+        """Convert a twscrape tweet object into the project's normalized model."""
+
         tweet_id = getattr(tweet, "id", None)
         text = getattr(tweet, "rawContent", None)
         user = getattr(tweet, "user", None)
@@ -119,6 +127,8 @@ class TwscrapeInfluencerScraper:
 
     @staticmethod
     def _coerce_datetime(value: datetime) -> datetime:
+        """Ensure normalized timestamps are timezone-aware UTC datetimes."""
+
         if value.tzinfo is None:
             return value.replace(tzinfo=UTC)
         return value

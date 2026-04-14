@@ -9,12 +9,16 @@ from influence_trader.domain.models import RelevantTweetCandidate
 
 @dataclass(frozen=True, slots=True)
 class PromptBundle:
+    """Small immutable container for one versioned prompt family."""
+
     version: str
     system_prompt: str
     user_template: Template
 
 
 class BasePromptRenderer:
+    """Load versioned prompt assets and expose shared bundle accessors."""
+
     prompt_family: str
 
     def __init__(self, version: str = "v1") -> None:
@@ -30,6 +34,8 @@ class BasePromptRenderer:
 
     @staticmethod
     def _load_bundle(prompt_family: str, version: str) -> PromptBundle:
+        """Read the Markdown prompt assets for one prompt family and version."""
+
         base_path = files("influence_trader.llm").joinpath(
             "prompt_assets",
             prompt_family,
@@ -45,9 +51,13 @@ class BasePromptRenderer:
 
 
 class MarketImpactPromptRenderer(BasePromptRenderer):
+    """Render the final analysis prompt from a retained tweet candidate."""
+
     prompt_family = "market_impact"
 
     def render_user_prompt(self, candidate: RelevantTweetCandidate) -> str:
+        """Inject candidate fields into the market-impact user prompt template."""
+
         tweet = candidate.tweet
 
         return self._bundle.user_template.substitute(
@@ -61,9 +71,13 @@ class MarketImpactPromptRenderer(BasePromptRenderer):
 
 
 class SemanticRelevancePromptRenderer(BasePromptRenderer):
+    """Render the lighter prompt used for semantic relevance classification."""
+
     prompt_family = "semantic_relevance"
 
     def render_user_prompt(self, candidate: RelevantTweetCandidate) -> str:
+        """Inject candidate fields into the semantic relevance user template."""
+
         tweet = candidate.tweet
 
         return self._bundle.user_template.substitute(

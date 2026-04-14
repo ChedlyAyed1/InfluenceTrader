@@ -18,6 +18,8 @@ from influence_trader.llm.prompt_loader import (
 
 
 class LLMRateLimitError(RuntimeError):
+    """Raised when Groq rejects a request because the caller hit a rate limit."""
+
     pass
 
 
@@ -29,6 +31,8 @@ StructuredOutputT = TypeVar(
 
 
 class GroqMarketAnalysisClient:
+    """Wrap Groq structured-output calls for relevance classification and analysis."""
+
     def __init__(self, settings: Settings) -> None:
         if not settings.groq_api_key:
             msg = "GROQ_API_KEY is required to use the LLM client."
@@ -47,6 +51,8 @@ class GroqMarketAnalysisClient:
         )
 
     async def analyze_tweet(self, candidate: RelevantTweetCandidate) -> MarketImpactAnalysis:
+        """Run the full market-impact prompt and validate the structured response."""
+
         return await self._request_structured_output(
             schema_model=MarketImpactAnalysis,
             messages=[
@@ -66,6 +72,8 @@ class GroqMarketAnalysisClient:
         self,
         candidate: RelevantTweetCandidate,
     ) -> SemanticRelevanceAssessment:
+        """Run the lighter semantic relevance prompt before full analysis."""
+
         return await self._request_structured_output(
             schema_model=SemanticRelevanceAssessment,
             messages=[
@@ -84,6 +92,8 @@ class GroqMarketAnalysisClient:
         )
 
     async def close(self) -> None:
+        """Close the reusable async HTTP client during app shutdown."""
+
         await self._client.aclose()
 
     def _build_payload(
@@ -93,6 +103,8 @@ class GroqMarketAnalysisClient:
         schema_model: type[StructuredOutputT],
         schema_name: str,
     ) -> dict[str, Any]:
+        """Build a Groq chat-completions payload with strict JSON schema output."""
+
         return {
             "model": self._model,
             "temperature": 0.1,
@@ -111,6 +123,8 @@ class GroqMarketAnalysisClient:
     def _json_schema(
         schema_model: type[StructuredOutputT],
     ) -> dict[str, Any]:
+        """Generate a plain JSON-serializable schema from a Pydantic model class."""
+
         schema = schema_model.model_json_schema()
         schema["additionalProperties"] = False
         return cast(dict[str, Any], json.loads(json.dumps(schema)))
@@ -122,6 +136,8 @@ class GroqMarketAnalysisClient:
         messages: list[dict[str, str]],
         schema_name: str,
     ) -> StructuredOutputT:
+        """Send a structured-output request and validate the returned JSON payload."""
+
         response = await self._client.post(
             "chat/completions",
             json=self._build_payload(
