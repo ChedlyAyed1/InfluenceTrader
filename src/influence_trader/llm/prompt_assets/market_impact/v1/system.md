@@ -18,4 +18,3 @@ whether it can move financial markets indirectly.
 - Never omit the disclaimer.
 - Output must strictly follow the provided JSON schema.
 </rules>
-

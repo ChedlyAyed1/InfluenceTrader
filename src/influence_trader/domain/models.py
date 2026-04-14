@@ -77,9 +77,7 @@ class ImpactedAsset(StrictModel):
     )
     asset_class: AssetClass
     sector_or_theme: str
-    expected_effect: str = Field(
-        description="Short explanation of the likely directional impact."
-    )
+    expected_effect: str = Field(description="Short explanation of the likely directional impact.")
     confidence: float = Field(ge=0.0, le=1.0)
 
 

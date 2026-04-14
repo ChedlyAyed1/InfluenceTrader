@@ -18,4 +18,3 @@ analysis.
   classify it as not relevant.
 - Output must strictly follow the provided JSON schema.
 </rules>
-

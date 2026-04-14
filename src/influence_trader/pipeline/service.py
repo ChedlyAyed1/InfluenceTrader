@@ -4,8 +4,8 @@ from influence_trader.domain.models import (
     AnalyzedTweet,
     PipelineRunRequest,
     PipelineRunResult,
-    RelevantTweetCandidate,
     RelevanceLabel,
+    RelevantTweetCandidate,
     ScrapedTweet,
 )
 from influence_trader.llm.client import GroqMarketAnalysisClient

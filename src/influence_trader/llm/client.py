@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, cast
+from typing import Any, TypeVar, cast
 
 import httpx
 
@@ -19,6 +19,13 @@ from influence_trader.llm.prompt_loader import (
 
 class LLMRateLimitError(RuntimeError):
     pass
+
+
+StructuredOutputT = TypeVar(
+    "StructuredOutputT",
+    MarketImpactAnalysis,
+    SemanticRelevanceAssessment,
+)
 
 
 class GroqMarketAnalysisClient:
@@ -83,7 +90,7 @@ class GroqMarketAnalysisClient:
         self,
         *,
         messages: list[dict[str, str]],
-        schema_model: type[MarketImpactAnalysis] | type[SemanticRelevanceAssessment],
+        schema_model: type[StructuredOutputT],
         schema_name: str,
     ) -> dict[str, Any]:
         return {
@@ -102,7 +109,7 @@ class GroqMarketAnalysisClient:
 
     @staticmethod
     def _json_schema(
-        schema_model: type[MarketImpactAnalysis] | type[SemanticRelevanceAssessment],
+        schema_model: type[StructuredOutputT],
     ) -> dict[str, Any]:
         schema = schema_model.model_json_schema()
         schema["additionalProperties"] = False
@@ -111,10 +118,10 @@ class GroqMarketAnalysisClient:
     async def _request_structured_output(
         self,
         *,
-        schema_model: type[MarketImpactAnalysis] | type[SemanticRelevanceAssessment],
+        schema_model: type[StructuredOutputT],
         messages: list[dict[str, str]],
         schema_name: str,
-    ) -> MarketImpactAnalysis | SemanticRelevanceAssessment:
+    ) -> StructuredOutputT:
         response = await self._client.post(
             "chat/completions",
             json=self._build_payload(
@@ -137,7 +144,4 @@ class GroqMarketAnalysisClient:
         if isinstance(content, list):
             content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
 
-        return cast(
-            MarketImpactAnalysis | SemanticRelevanceAssessment,
-            schema_model.model_validate_json(content),
-        )
+        return schema_model.model_validate_json(content)

@@ -23,7 +23,10 @@ class TweetStructuralPreFilter:
         text = self._normalize(tweet.text)
         normalized_target_handles = {handle.lower().lstrip("@") for handle in target_handles or []}
 
-        if normalized_target_handles and tweet.author.handle.lower() not in normalized_target_handles:
+        if (
+            normalized_target_handles
+            and tweet.author.handle.lower() not in normalized_target_handles
+        ):
             return False, "Tweet author is outside the requested account set."
 
         if tweet.is_reply:

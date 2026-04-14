@@ -21,4 +21,3 @@ $tweet_text
 4. Stay conservative if the evidence is weak.
 5. Return only valid JSON matching the schema.
 </analysis_goals>
-

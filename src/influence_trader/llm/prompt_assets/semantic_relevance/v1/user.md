@@ -21,4 +21,3 @@ $tweet_text
   low-signal commentary.
 - Keep the reason short and decision-useful.
 </decision_criteria>
-
