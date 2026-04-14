@@ -22,8 +22,6 @@ The application currently works like this:
    - `not_relevant`
 5. run full market-impact analysis only on the retained candidates
 
-This gives a much better signal than the original keyword-only approach.
-
 ## Why FastAPI
 
 `FastAPI` is a strong fit here because the product is mostly:
@@ -32,9 +30,6 @@ This gives a much better signal than the original keyword-only approach.
 - external API calls
 - structured JSON APIs
 - background/pipeline style work
-
-The project may still gain a dashboard later, but the backend core is better
-served by a lightweight async API.
 
 ## Current Stack
 
