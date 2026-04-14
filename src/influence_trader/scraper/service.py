@@ -50,8 +50,6 @@ class TwscrapeInfluencerScraper:
                     continue
                 if normalized.author.handle.lower() != normalized_handle:
                     continue
-                if normalized.is_repost or normalized.is_reply:
-                    continue
                 if normalized.tweet_id in seen_ids:
                     continue
 

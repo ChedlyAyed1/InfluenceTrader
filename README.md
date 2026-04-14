@@ -4,7 +4,7 @@ A FastAPI proof of concept for:
 
 - scraping tweets from selected X accounts
 - normalizing them into domain models
-- filtering obvious noise with a structural prefilter
+- applying structural prefiltering before semantic classification
 - classifying semantic market relevance with Groq
 - generating strict structured market analysis JSON
 
@@ -58,7 +58,7 @@ tests/
 - authenticated X scraping through `twscrape`
 - a local compatibility workaround for the known `twscrape xclid` issue
 - strict internal tweet normalization
-- structural prefiltering before any expensive LLM call
+- structural prefiltering before semantic relevance classification
 - semantic relevance classification with Groq
 - full market-impact analysis with strict JSON schema output
 - Swagger UI for manual testing
@@ -139,7 +139,7 @@ The current API exposes:
 - `POST /api/v1/tweets/fetch`
 - `POST /api/v1/pipeline/run-once`
 
-Detailed request/response documentation lives in [API.md](/c:/Work/InfluenceTrader/API.md).
+Detailed request/response documentation lives in [API.md](API.md).
 
 ## Fetch Modes
 
@@ -231,4 +231,4 @@ general political accounts.
 
 ## License
 
-This project is released under the [MIT License].
+This project is released under the [MIT License](LICENSE).
