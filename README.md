@@ -1,48 +1,50 @@
 # InfluenceTrader
 
-A clean proof of concept for monitoring high-impact macro and geopolitical tweets,
-filtering noise, and producing structured market analysis that can later feed a
-real-time trading intelligence pipeline.
+A FastAPI proof of concept for:
 
-## Why FastAPI Instead of Django 6.0?
+- scraping tweets from selected X accounts
+- normalizing them into domain models
+- filtering obvious noise with a structural prefilter
+- classifying semantic market relevance with Groq
+- generating strict structured market analysis JSON
 
-For this project, `FastAPI` is the better fit:
+The project is built as a pipeline, not a single prompt call.
 
-- the core of the product is an asynchronous I/O-bound pipeline (`twscrape`,
-  HTTP calls to Groq, a scheduler, and Telegram webhooks)
-- we want a lightweight API that is easy to test and evolve
-- Django 6.0 is still an excellent framework, but it is a better fit when the
-  priority is a rich admin panel, server-rendered pages, and a full back-office
-  from day one
+## Current Pipeline
 
-A `Streamlit` dashboard can still be added later without coupling the whole
-application to Django.
+The application currently works like this:
 
-## Selected Groq Model
+1. scrape recent tweets from one or more X handles
+2. normalize them into `ScrapedTweet`
+3. apply a lightweight structural prefilter
+4. if Groq is configured, classify each remaining tweet as:
+   - `market_relevant`
+   - `not_relevant`
+5. run full market-impact analysis only on the retained candidates
 
-As of April 9, 2026, Groq documentation still lists
-`llama-3.3-70b-versatile` as a production model, but strict structured JSON
-outputs (`strict: true`) are officially supported by `openai/gpt-oss-20b` and
-`openai/gpt-oss-120b`.
+This gives a much better signal than the original keyword-only approach.
 
-For this project, the default choice is:
+## Why FastAPI
 
-- `openai/gpt-oss-20b`
+`FastAPI` is a strong fit here because the product is mostly:
 
-Why:
+- asynchronous I/O
+- external API calls
+- structured JSON APIs
+- background/pipeline style work
 
-- better fit for a strict JSON schema
-- faster and more affordable than `openai/gpt-oss-120b`
-- more reliable than a best-effort JSON mode when automating a pipeline
+The project may still gain a dashboard later, but the backend core is better
+served by a lightweight async API.
 
-## What Phase 1 Includes
+## Current Stack
 
-- a `twscrape` scraper that normalizes tweets into domain objects
-- a heuristic relevance filter that removes part of the noise before any LLM call
-- a Groq client that produces strict JSON analysis
-- a FastAPI app exposing proof-of-concept endpoints for fetching and analyzing tweets
+- `FastAPI` for the HTTP API
+- `twscrape` for X scraping
+- `Groq` for semantic relevance classification and final analysis
+- `Pydantic` for strict domain and response validation
+- `Docker` / `docker compose` for local runtime
 
-## Structure
+## Project Structure
 
 ```text
 src/influence_trader/
@@ -56,11 +58,42 @@ src/influence_trader/
 tests/
 ```
 
+## What Phase 1 Includes
+
+- authenticated X scraping through `twscrape`
+- a local compatibility workaround for the known `twscrape xclid` issue
+- strict internal tweet normalization
+- structural prefiltering before any expensive LLM call
+- semantic relevance classification with Groq
+- full market-impact analysis with strict JSON schema output
+- Swagger UI for manual testing
+
+## Environment
+
+Copy the example file and fill in your credentials:
+
+```bash
+cp .env.example .env
+```
+
+Main settings:
+
+- `GROQ_API_KEY`
+- `GROQ_MODEL`
+- `X_ACCOUNT_USERNAME`
+- `X_ACCOUNT_COOKIES`
+- `X_DEFAULT_HANDLES`
+
+Notes:
+
+- `twscrape` requires at least one authenticated X account
+- cookies are generally more stable than login/password
+- do not commit real cookies or API keys
+
 ## Installation
 
 ```bash
 uv sync --group dev
-cp .env.example .env
 ```
 
 ## Run Locally
@@ -69,21 +102,14 @@ cp .env.example .env
 uv run uvicorn influence_trader.main:app --reload
 ```
 
+Then open:
+
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
 ## Docker
 
-Build the image:
-
-```bash
-docker build -t influence-trader .
-```
-
-Run directly:
-
-```bash
-docker run --rm -p 8000:8000 --env-file .env -v $(pwd)/data:/app/data influence-trader
-```
-
-Run with Compose:
+Build and run with Compose:
 
 ```bash
 docker compose up --build
@@ -95,6 +121,10 @@ Stop:
 docker compose down
 ```
 
+The app will be available at:
+
+- `http://localhost:8000`
+
 ## Quality Checks
 
 ```bash
@@ -105,17 +135,101 @@ uv run pre-commit install
 uv run pre-commit run --all-files
 ```
 
-## POC Endpoints
+## Endpoints
+
+The current API exposes:
 
 - `GET /health`
+- `GET /api/v1/health`
 - `POST /api/v1/tweets/fetch`
 - `POST /api/v1/pipeline/run-once`
 
-## Important Notes
+Detailed request/response documentation lives in [API.md](/c:/Work/InfluenceTrader/API.md).
 
-- `twscrape` requires at least one authenticated X/Twitter account.
-- X scraping is not guaranteed to remain stable over time, so the next phases
-  should include retries, account rotation, proxies, and observability.
-- The project is not truly "100% free" in a durable production setting if you
-  want resilience: X may require multiple accounts or proxies, and Groq's free
-  developer plan should not be treated as unlimited guaranteed capacity.
+## Fetch Modes
+
+`POST /api/v1/tweets/fetch` has two useful modes:
+
+### Raw scrape mode
+
+```json
+{
+  "handles": ["realDonaldTrump"],
+  "limit_per_handle": 3,
+  "relevant_only": false
+}
+```
+
+Behavior:
+
+- no Groq call
+- returns normalized scraped tweets only
+- useful for debugging the scraper itself
+
+### Relevant tweets mode
+
+```json
+{
+  "handles": ["financialjuice", "KobeissiLetter"],
+  "limit_per_handle": 3,
+  "relevant_only": true
+}
+```
+
+Behavior:
+
+- scrape tweets
+- run structural prefilter
+- if Groq is configured, run semantic relevance classification
+- return only retained candidates
+
+## Full Pipeline Example
+
+```json
+{
+  "handles": ["KobeissiLetter"],
+  "limit_per_handle": 3,
+  "max_analyses": 2
+}
+```
+
+Typical flow:
+
+- fetch `3` tweets
+- keep `3` semantically relevant candidates
+- analyze only `2` because `max_analyses=2`
+
+This is the cleanest endpoint for validating the whole product end to end.
+
+## Current Behavior Notes
+
+- `limit_per_handle` now means: keep the newest accepted `N` tweets per handle
+- `relevant_only=false` does not spend Groq quota
+- `relevant_only=true` may call Groq for semantic classification
+- `pipeline/run-once` requires `GROQ_API_KEY`
+- Groq `429` errors are surfaced as HTTP `429` instead of a generic `500`
+
+## Example Accounts For Testing
+
+These are useful for macro / market-heavy tests:
+
+- `KobeissiLetter`
+- `financialjuice`
+
+They usually produce much better test cases for this project than celebrity or
+general political accounts.
+
+## Important Caveats
+
+- X scraping remains inherently fragile over time
+- `twscrape` behavior can change when X changes internals
+- Groq free or developer quotas are not unlimited
+- semantic filtering is much better than keyword matching, but still not perfect
+
+## Next Logical Steps
+
+- improve retry / backoff behavior around Groq rate limits
+- batch or cap semantic classification more aggressively
+- persist analyzed events
+- add scheduling and alerting
+- add a downstream delivery channel such as Telegram
