@@ -228,3 +228,7 @@ general political accounts.
 - persist analyzed events
 - add scheduling and alerting
 - add a downstream delivery channel such as Telegram
+
+## License
+
+This project is released under the [MIT License].
