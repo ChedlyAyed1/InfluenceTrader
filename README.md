@@ -48,10 +48,35 @@ src/influence_trader/
   domain/
   llm/
     prompt_assets/
+    eval_runner.py
+    evals.py
   pipeline/
   scraper/
 tests/
+  evals/
 ```
+
+## Prompt Assets
+
+Prompt files are versioned under `src/influence_trader/llm/prompt_assets/`.
+
+Each prompt bundle follows this structure:
+
+```text
+prompt_assets/
+  <prompt_family>/
+    <version>/
+      metadata.json
+      system.md
+      user.md
+```
+
+- `system.md` stores stable instructions and guardrails
+- `user.md` stores the runtime template rendered with tweet data
+- `metadata.json` documents the bundle and validates expected template variables
+
+Prompt versions are designed to stay paired with eval datasets under
+`tests/evals/<prompt_family>/<version>/`.
 
 ## What Phase 1 Includes
 
@@ -137,6 +162,12 @@ uv run python -m influence_trader.llm.eval_runner --family semantic_relevance --
 uv run python -m influence_trader.llm.eval_runner --family semantic_relevance --eval-version v1 --prompt-version v1 --mode run
 uv run python -m influence_trader.llm.eval_runner --family semantic_relevance --eval-version v1 --prompt-version v1 --compare-to v2 --mode run
 ```
+
+Notes:
+
+- `--mode validate` checks local prompt and eval assets without calling the model
+- `--mode run` calls the configured Groq model and therefore requires `GROQ_API_KEY`
+- prompt versions and eval versions can be compared independently when needed
 
 ## Endpoints
 
