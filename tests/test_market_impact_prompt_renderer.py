@@ -11,6 +11,8 @@ def test_market_impact_prompt_renderer_loads_versioned_prompt_files() -> None:
     renderer = MarketImpactPromptRenderer(version="v1")
 
     assert renderer.version == "v1"
+    assert renderer.metadata.prompt_family == "market_impact"
+    assert renderer.metadata.version == "v1"
     assert "<role>" in renderer.system_prompt
 
 
@@ -52,3 +54,11 @@ def test_semantic_relevance_prompt_renderer_injects_candidate_values() -> None:
     assert "@elonmusk" in prompt
     assert "prefilter_reason" in prompt
     assert "industrial policy package" in prompt
+
+
+def test_semantic_relevance_prompt_renderer_loads_metadata_contract() -> None:
+    renderer = SemanticRelevancePromptRenderer(version="v1")
+
+    assert renderer.metadata.prompt_family == "semantic_relevance"
+    assert renderer.metadata.version == "v1"
+    assert "prefilter_reason" in renderer.metadata.user_template_variables

@@ -5,6 +5,7 @@ build-backend = "hatchling.build"
 [tool.hatch.build]
 include = [
   "src/influence_trader/llm/prompt_assets/**/*.md",
+  "src/influence_trader/llm/prompt_assets/**/*.json",
 ]
 
 [project]

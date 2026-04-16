@@ -1,0 +1,14 @@
+{
+  "prompt_family": "market_impact",
+  "version": "v1",
+  "purpose": "Estimate whether a retained tweet can move markets and return a structured macro-financial analysis.",
+  "user_template_variables": [
+    "author_handle",
+    "author_display_name",
+    "posted_at",
+    "tweet_url",
+    "filter_reason",
+    "tweet_text"
+  ],
+  "notes": "Initial production prompt for final market impact analysis."
+}

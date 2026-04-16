@@ -1,0 +1,14 @@
+{
+  "prompt_family": "semantic_relevance",
+  "version": "v1",
+  "purpose": "Decide whether a structurally retained tweet is relevant enough to deserve full market impact analysis.",
+  "user_template_variables": [
+    "author_handle",
+    "author_display_name",
+    "posted_at",
+    "tweet_url",
+    "prefilter_reason",
+    "tweet_text"
+  ],
+  "notes": "Initial production prompt for semantic relevance classification."
+}
