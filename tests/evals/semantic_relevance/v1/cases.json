@@ -1,0 +1,146 @@
+[
+  {
+    "case_id": "semantic_relevance_v1_trade_tariffs_semiconductors",
+    "prompt_family": "semantic_relevance",
+    "prompt_version": "v1",
+    "tags": ["trade", "equities", "happy_path"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 1001,
+        "url": "https://x.com/example/status/1001",
+        "author": {
+          "handle": "policydesk",
+          "display_name": "Policy Desk"
+        },
+        "text": "We are preparing a 25% tariff on imported semiconductors and advanced chips starting next month.",
+        "language": "en",
+        "created_at": "2026-04-15T10:00:00Z"
+      },
+      "filter_reason": "Matched trade-policy and industrial-policy heuristics."
+    },
+    "expected": {
+      "label": "market_relevant",
+      "reason_focus": "Direct trade policy signal with a clear semiconductor supply-chain transmission channel."
+    }
+  },
+  {
+    "case_id": "semantic_relevance_v1_central_bank_rates_longer",
+    "prompt_family": "semantic_relevance",
+    "prompt_version": "v1",
+    "tags": ["rates", "macro", "happy_path"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 1002,
+        "url": "https://x.com/example/status/1002",
+        "author": {
+          "handle": "macroalerts",
+          "display_name": "Macro Alerts"
+        },
+        "text": "Officials signaled policy rates may need to stay restrictive for longer if inflation progress stalls.",
+        "language": "en",
+        "created_at": "2026-04-15T10:30:00Z"
+      },
+      "filter_reason": "Matched central-bank and inflation heuristics."
+    },
+    "expected": {
+      "label": "market_relevant",
+      "reason_focus": "Clear macro policy signal that can move rates, FX, and equity sentiment."
+    }
+  },
+  {
+    "case_id": "semantic_relevance_v1_shipping_ceasefire_signal",
+    "prompt_family": "semantic_relevance",
+    "prompt_version": "v1",
+    "tags": ["geopolitics", "energy", "edge_case"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 1003,
+        "url": "https://x.com/example/status/1003",
+        "author": {
+          "handle": "globalwire",
+          "display_name": "Global Wire"
+        },
+        "text": "Negotiators say a ceasefire framework could reopen Red Sea shipping lanes within days.",
+        "language": "en",
+        "created_at": "2026-04-15T11:00:00Z"
+      },
+      "filter_reason": "Matched conflict and logistics heuristics."
+    },
+    "expected": {
+      "label": "market_relevant",
+      "reason_focus": "Geopolitical de-escalation with plausible oil and shipping-cost transmission."
+    }
+  },
+  {
+    "case_id": "semantic_relevance_v1_generic_ai_launch",
+    "prompt_family": "semantic_relevance",
+    "prompt_version": "v1",
+    "tags": ["ai", "false_positive_guard"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 1004,
+        "url": "https://x.com/example/status/1004",
+        "author": {
+          "handle": "foundernews",
+          "display_name": "Founder News"
+        },
+        "text": "We are excited to launch our new AI assistant today. Try it now and tell us what you think.",
+        "language": "en",
+        "created_at": "2026-04-15T11:15:00Z"
+      },
+      "filter_reason": "Long original tweet from a target account; requires semantic relevance classification."
+    },
+    "expected": {
+      "label": "not_relevant",
+      "reason_focus": "Product promotion without a clear macro, regulatory, or market-wide transmission channel."
+    }
+  },
+  {
+    "case_id": "semantic_relevance_v1_meme_and_hype",
+    "prompt_family": "semantic_relevance",
+    "prompt_version": "v1",
+    "tags": ["noise", "false_positive_guard"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 1005,
+        "url": "https://x.com/example/status/1005",
+        "author": {
+          "handle": "bigaccount",
+          "display_name": "Big Account"
+        },
+        "text": "This is going to be legendary lol",
+        "language": "en",
+        "created_at": "2026-04-15T11:20:00Z"
+      },
+      "filter_reason": "Long original tweet from a target account; requires semantic relevance classification."
+    },
+    "expected": {
+      "label": "not_relevant",
+      "reason_focus": "No usable policy, macro, geopolitical, or broad risk-sentiment signal."
+    }
+  },
+  {
+    "case_id": "semantic_relevance_v1_crypto_regulation",
+    "prompt_family": "semantic_relevance",
+    "prompt_version": "v1",
+    "tags": ["crypto", "regulation", "happy_path"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 1006,
+        "url": "https://x.com/example/status/1006",
+        "author": {
+          "handle": "regwatch",
+          "display_name": "Reg Watch"
+        },
+        "text": "Draft legislation would require stablecoin issuers to hold short-dated Treasury reserves and submit to federal supervision.",
+        "language": "en",
+        "created_at": "2026-04-15T12:00:00Z"
+      },
+      "filter_reason": "Matched crypto-policy and regulation heuristics."
+    },
+    "expected": {
+      "label": "market_relevant",
+      "reason_focus": "Direct regulatory signal for crypto markets with spillover to rates and dollar demand."
+    }
+  }
+]

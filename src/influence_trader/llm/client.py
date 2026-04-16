@@ -33,14 +33,24 @@ StructuredOutputT = TypeVar(
 class GroqMarketAnalysisClient:
     """Wrap Groq structured-output calls for relevance classification and analysis."""
 
-    def __init__(self, settings: Settings) -> None:
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        market_impact_prompt_version: str = "v1",
+        semantic_relevance_prompt_version: str = "v1",
+    ) -> None:
         if not settings.groq_api_key:
             msg = "GROQ_API_KEY is required to use the LLM client."
             raise ValueError(msg)
 
         self._model = settings.groq_model
-        self._market_impact_prompt_renderer = MarketImpactPromptRenderer(version="v1")
-        self._semantic_relevance_prompt_renderer = SemanticRelevancePromptRenderer(version="v1")
+        self._market_impact_prompt_renderer = MarketImpactPromptRenderer(
+            version=market_impact_prompt_version
+        )
+        self._semantic_relevance_prompt_renderer = SemanticRelevancePromptRenderer(
+            version=semantic_relevance_prompt_version
+        )
         self._client = httpx.AsyncClient(
             base_url=settings.groq_base_url.rstrip("/"),
             headers={

@@ -41,3 +41,11 @@ Each version directory is immutable once shipped.
 - Keep `user.md` focused on task input and decision criteria
 - Use descriptive placeholder names such as `tweet_text` or `prefilter_reason`
 - Record the purpose of the prompt version in `metadata.json`
+
+## Eval Pairing
+
+Keep prompt versions paired with eval assets under `tests/evals/<prompt_family>/<version>/`.
+
+- Add or update `cases.json` whenever prompt behavior changes
+- Use `rubric.md` for review guidance that should not live inside individual test cases
+- Treat prompt changes and eval changes as one review unit

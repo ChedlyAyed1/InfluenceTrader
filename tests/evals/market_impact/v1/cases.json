@@ -1,0 +1,110 @@
+[
+  {
+    "case_id": "market_impact_v1_semiconductor_tariffs",
+    "prompt_family": "market_impact",
+    "prompt_version": "v1",
+    "tags": ["trade", "equities", "happy_path"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 2001,
+        "url": "https://x.com/example/status/2001",
+        "author": {
+          "handle": "policydesk",
+          "display_name": "Policy Desk"
+        },
+        "text": "We are preparing a 25% tariff on imported semiconductors and advanced chips starting next month.",
+        "language": "en",
+        "created_at": "2026-04-15T10:00:00Z"
+      },
+      "filter_reason": "Direct trade-policy signal with a clear semiconductor supply-chain transmission channel."
+    },
+    "expected": {
+      "market_direction": "bearish",
+      "time_horizon": "short_term",
+      "minimum_confidence": 0.4,
+      "impacted_assets_any": ["Nasdaq 100", "US semiconductor equities", "USD/CNH"],
+      "rationale_focus": "Tariffs can raise input costs, disrupt supply chains, and pressure risk sentiment."
+    }
+  },
+  {
+    "case_id": "market_impact_v1_restrictive_rates_signal",
+    "prompt_family": "market_impact",
+    "prompt_version": "v1",
+    "tags": ["rates", "macro", "happy_path"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 2002,
+        "url": "https://x.com/example/status/2002",
+        "author": {
+          "handle": "macroalerts",
+          "display_name": "Macro Alerts"
+        },
+        "text": "Officials signaled policy rates may need to stay restrictive for longer if inflation progress stalls.",
+        "language": "en",
+        "created_at": "2026-04-15T10:30:00Z"
+      },
+      "filter_reason": "Clear macro policy signal that can move rates, FX, and equity sentiment."
+    },
+    "expected": {
+      "market_direction": "bearish",
+      "time_horizon": "intraday",
+      "minimum_confidence": 0.45,
+      "impacted_assets_any": ["US Treasuries", "S&P 500", "US Dollar Index"],
+      "rationale_focus": "Higher-for-longer expectations can pressure duration and broad risk assets."
+    }
+  },
+  {
+    "case_id": "market_impact_v1_red_sea_ceasefire",
+    "prompt_family": "market_impact",
+    "prompt_version": "v1",
+    "tags": ["geopolitics", "energy", "edge_case"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 2003,
+        "url": "https://x.com/example/status/2003",
+        "author": {
+          "handle": "globalwire",
+          "display_name": "Global Wire"
+        },
+        "text": "Negotiators say a ceasefire framework could reopen Red Sea shipping lanes within days.",
+        "language": "en",
+        "created_at": "2026-04-15T11:00:00Z"
+      },
+      "filter_reason": "Geopolitical de-escalation with plausible oil and shipping-cost transmission."
+    },
+    "expected": {
+      "market_direction": "bullish",
+      "time_horizon": "immediate",
+      "minimum_confidence": 0.35,
+      "impacted_assets_any": ["WTI Crude Oil", "Global shipping equities", "European equities"],
+      "rationale_focus": "Lower shipping disruption risk can ease energy and logistics stress and support risk sentiment."
+    }
+  },
+  {
+    "case_id": "market_impact_v1_stablecoin_reserve_bill",
+    "prompt_family": "market_impact",
+    "prompt_version": "v1",
+    "tags": ["crypto", "regulation", "edge_case"],
+    "candidate": {
+      "tweet": {
+        "tweet_id": 2004,
+        "url": "https://x.com/example/status/2004",
+        "author": {
+          "handle": "regwatch",
+          "display_name": "Reg Watch"
+        },
+        "text": "Draft legislation would require stablecoin issuers to hold short-dated Treasury reserves and submit to federal supervision.",
+        "language": "en",
+        "created_at": "2026-04-15T12:00:00Z"
+      },
+      "filter_reason": "Direct regulatory signal for crypto markets with spillover to rates and dollar demand."
+    },
+    "expected": {
+      "market_direction": "mixed",
+      "time_horizon": "short_term",
+      "minimum_confidence": 0.35,
+      "impacted_assets_any": ["Bitcoin", "US Treasuries", "US Dollar Index"],
+      "rationale_focus": "Regulation may support institutional adoption while tightening constraints on some crypto participants."
+    }
+  }
+]

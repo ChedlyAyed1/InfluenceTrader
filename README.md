@@ -130,6 +130,14 @@ uv run pre-commit install
 uv run pre-commit run --all-files
 ```
 
+Prompt eval commands:
+
+```bash
+uv run python -m influence_trader.llm.eval_runner --family semantic_relevance --eval-version v1 --prompt-version v1 --mode validate
+uv run python -m influence_trader.llm.eval_runner --family semantic_relevance --eval-version v1 --prompt-version v1 --mode run
+uv run python -m influence_trader.llm.eval_runner --family semantic_relevance --eval-version v1 --prompt-version v1 --compare-to v2 --mode run
+```
+
 ## Endpoints
 
 The current API exposes:
